@@ -39,11 +39,11 @@ class ExtensionController extends AbstractController
     public function NewExtension(Request $request)
     {         
         $form = $this->createFormBuilder(array())
-        ->add('Usuario', TextType::class)
-        ->add('Contrasena', TextType::class)
-        ->add('Registros_Maximos', TextType::class)
-        ->add('Crear', SubmitType::class)
-        ->getForm();
+            ->add('Usuario', TextType::class)
+            ->add('Contrasena', TextType::class)
+            ->add('Registros_Maximos', TextType::class)
+            ->add('Crear', SubmitType::class)
+            ->getForm();
  
        
         $form->handleRequest($request);
@@ -91,15 +91,29 @@ class ExtensionController extends AbstractController
      */
     public function DeleteExtension($id)
     {
+        $psaors = $this->getDoctrine()
+            ->getRepository(PsAors::class)
+            ->findOneById($id);
+
         $psauths = $this->getDoctrine()
             ->getRepository(PsAuths::class)
+            ->findOneById($id);
+
+        $psendpoints = $this->getDoctrine()
+            ->getRepository(PsEndpoints::class)
             ->findOneById($id);
 		        
         $em = $this->getDoctrine()
             ->getManager();
 
+        $em->remove($psaors);
+        $em->flush($psaors); 
+        
         $em->remove($psauths);
         $em->flush($psauths); 
+        
+        $em->remove($psendpoints);
+        $em->flush($psendpoints); 
         
         return new Response('Extensión '. $id . ' eliminada');    
     }

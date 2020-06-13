@@ -1,12 +1,17 @@
+{% if psauths == false %}
+    <p>No hay extensiones creadas</p>
+    <br>
+    <a href="{{ path('newextension') }}">Nueva extension</a>
+{% endif %}
+
 <ul>
-    {% for item in libros %}
+    {% for item in psauths %}
 
         <li>
             {{item.id}} <a href="{{ path('deleteextension', {id: item.id}) }}">Eliminar</a> <a href="{{ path('editextension', {id: item.id}) }}">Editar</a>
         </li>
 
     {% endfor %}
-    
-    <a href="{{ path('newextension') }}">Nueva extension</a>
-
 </ul>
+
+<a href="{{ path('newextension') }}">Nueva extension</a>
