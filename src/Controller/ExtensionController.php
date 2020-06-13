@@ -144,7 +144,7 @@ class ExtensionController extends AbstractController
         ->add('Usuario', TextType::class)
         ->add('Contrasena', TextType::class)
         ->add('Registros_Maximos', TextType::class)
-        ->add('Crear', SubmitType::class)
+        ->add('Editar', SubmitType::class)
         ->getForm();
          
          
