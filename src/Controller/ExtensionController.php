@@ -87,13 +87,13 @@ class ExtensionController extends AbstractController
     }
 
     /**
-     * @Route("/deleteextension{id}", name="deleteextension")
+     * @Route("/deleteextension/{id}", name="deleteextension")
      */
     public function DeleteExtension($id)
     {
         $psauths = $this->getDoctrine()
             ->getRepository(PsAuths::class)
-            ->findOneById( $id );
+            ->findOneById($id);
 		        
         $em = $this->getDoctrine()
             ->getManager();
@@ -105,7 +105,7 @@ class ExtensionController extends AbstractController
     }
 
     /**
-     * @Route("/editextension{id}", name="editextension")
+     * @Route("/editextension/{id}", name="editextension")
      */
     public function EditExtension(Request $request, $id)
     {         
