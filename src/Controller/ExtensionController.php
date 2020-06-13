@@ -77,7 +77,7 @@ class ExtensionController extends AbstractController
 
             $em->flush();
          
-            return new Response( "Extensión creada");
+            return $this->redirectToRoute('index');
         }
         else{
             return $this->render('extension/new_extension.html.twig', 
@@ -115,7 +115,7 @@ class ExtensionController extends AbstractController
         $em->remove($psendpoints);
         $em->flush($psendpoints); 
         
-        return new Response('Extensión '. $id . ' eliminada');    
+        return $this->redirectToRoute('index');
     }
 
     /**
@@ -139,7 +139,7 @@ class ExtensionController extends AbstractController
          
         $formData = ['Usuario' => $psaors->getId(), 
                     'Contrasena' => $psauths->getPassword(), 
-                    'description' => $psaors->setMaxContacts('Registros_Maximos'),
+                    'Registros_Maximos' => $psaors->setMaxContacts('Registros_Maximos'),
                 ];
       
 
@@ -160,19 +160,16 @@ class ExtensionController extends AbstractController
             $data = $form->getData();
             $em = $this->getDoctrine()->getManager();            
            
-            $psaors = new PsAors();
             $psaors->setId($data['Usuario']);
             $psaors->setMaxContacts($data['Registros_Maximos']);
             $em->persist($psaors);
 
-            $psauths = new PsAuths();
             $psauths->setId($data['Usuario']);
             $psauths->setAuthType('userpass');
             $psauths->setPassword($data['Contrasena']);
             $psauths->setUsername($data['Usuario']);
             $em->persist($psauths);
 
-            $psendpoints = new PsEndpoints();
             $psendpoints->setId($data['Usuario']);
             $psendpoints->setTransport('transport-udp');
             $psendpoints->setAors($data['Usuario']);
@@ -185,7 +182,7 @@ class ExtensionController extends AbstractController
 
             $em->flush();
          
-            return new Response( "Extensión editada");
+            return $this->redirectToRoute('index');
         }
         else{
             return $this->render('extension/edit_extension.html.twig', 
