@@ -23,10 +23,6 @@ class ExtensionController extends AbstractController
         $psauths = $this->getDoctrine()
             ->getRepository(PsAuths::class)
             ->findAll();
-    
-            if (!$psauths) {
-                return new Response( "Aún no hay extensiones creadas");
-            }
      
         return $this->render('extension/index.html.twig',
             ['psauths' => $psauths,]
@@ -139,7 +135,7 @@ class ExtensionController extends AbstractController
          
         $formData = ['Usuario' => $psaors->getId(), 
                     'Contrasena' => $psauths->getPassword(), 
-                    'Registros_Maximos' => $psaors->setMaxContacts('Registros_Maximos'),
+                    'Registros_Maximos' => $psaors->getMaxContacts('Registros_Maximos'),
                 ];
       
 
