@@ -20,47 +20,55 @@ class ExtensionController extends AbstractController
      */
     public function index()
     {
-        return $this->render('extension/index.html.twig', [
-            'controller_name' => 'ExtensionController',
-        ]);
+        $psauths = $this->getDoctrine()
+            ->getRepository(PsAuths::class)
+            ->findAll();
+    
+            if (!$psauths) {
+                return new Response( "Aún no hay extensiones creadas");
+            }
+     
+        return $this->render('extension/index.html.twig',
+            ['psauths' => $psauths,]
+        );
     }
 
     /**
      * @Route("/newextension", name="newextension")
      */
-    public function ExtensionForm( Request $request )
+    public function NewExtension(Request $request)
     {         
         $form = $this->createFormBuilder(array())
-        ->add('username', TextType::class)
-        ->add('password', TextType::class)
-        ->add('max_contacts', TextType::class)
-        ->add('Send', SubmitType::class)
+        ->add('Usuario', TextType::class)
+        ->add('Contrasena', TextType::class)
+        ->add('Registros_Maximos', TextType::class)
+        ->add('Crear', SubmitType::class)
         ->getForm();
  
        
-        $form->handleRequest( $request );
+        $form->handleRequest($request);
 
          if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
             $em = $this->getDoctrine()->getManager();            
            
             $psaors = new PsAors();
-            $psaors->setId($data['username']);
-            $psaors->setMaxContacts($data['max_contacts']);
+            $psaors->setId($data['Usuario']);
+            $psaors->setMaxContacts($data['Registros_Maximos']);
             $em->persist($psaors);
 
             $psauths = new PsAuths();
-            $psauths->setId($data['username']);
+            $psauths->setId($data['Usuario']);
             $psauths->setAuthType('userpass');
-            $psauths->setPassword($data['password']);
-            $psauths->setUsername($data['username']);
+            $psauths->setPassword($data['Contrasena']);
+            $psauths->setUsername($data['Usuario']);
             $em->persist($psauths);
 
             $psendpoints = new PsEndpoints();
-            $psendpoints->setId($data['username']);
+            $psendpoints->setId($data['Usuario']);
             $psendpoints->setTransport('transport-udp');
-            $psendpoints->setAors($data['username']);
-            $psendpoints->setAuth($data['username']);
+            $psendpoints->setAors($data['Usuario']);
+            $psendpoints->setAuth($data['Usuario']);
             $psendpoints->setContext('reclutas-pbx');
             $psendpoints->setDisallow('all');
             $psendpoints->setAllow('ulaw');
@@ -69,11 +77,106 @@ class ExtensionController extends AbstractController
 
             $em->flush();
          
-            return new Response( "Save");
+            return new Response( "Extensión creada");
         }
         else{
-            return $this->render('extension/newextension.html.twig', 
-            ['form' => $form->createView()]);
+            return $this->render('extension/new_extension.html.twig', 
+                ['form' => $form->createView(),]
+            );
+        }
+    }
+
+    /**
+     * @Route("/deleteextension{id}", name="deleteextension")
+     */
+    public function DeleteExtension($id)
+    {
+        $psauths = $this->getDoctrine()
+            ->getRepository(PsAuths::class)
+            ->findOneById( $id );
+		        
+        $em = $this->getDoctrine()
+            ->getManager();
+
+        $em->remove($psauths);
+        $em->flush($psauths); 
+        
+        return new Response('Extensión '. $id . ' eliminada');    
+    }
+
+    /**
+     * @Route("/editextension{id}", name="editextension")
+     */
+    public function EditExtension(Request $request, $id)
+    {         
+        $psaors = $this->getDoctrine()
+        ->getRepository(PsAors::class)
+        ->findOneById($id);
+
+        $psauths = $this->getDoctrine()
+        ->getRepository(PsAuths::class)
+        ->findOneById($id);
+
+        $psendpoints = $this->getDoctrine()
+        ->getRepository(PsEndpoints::class)
+        ->findOneById($id);
+         
+       
+         
+        $formData = ['Usuario' => $psaors->getId(), 
+                    'Contrasena' => $psauths->getPassword(), 
+                    'description' => $psaors->setMaxContacts('Registros_Maximos'),
+                ];
+      
+
+        
+        $form = $this->createFormBuilder($formData)
+        ->add('Usuario', TextType::class)
+        ->add('Contrasena', TextType::class)
+        ->add('Registros_Maximos', TextType::class)
+        ->add('Crear', SubmitType::class)
+        ->getForm();
+         
+         
+              
+        $form->handleRequest($request);
+
+         if ($form->isSubmitted() && $form->isValid()) {
+
+            $data = $form->getData();
+            $em = $this->getDoctrine()->getManager();            
+           
+            $psaors = new PsAors();
+            $psaors->setId($data['Usuario']);
+            $psaors->setMaxContacts($data['Registros_Maximos']);
+            $em->persist($psaors);
+
+            $psauths = new PsAuths();
+            $psauths->setId($data['Usuario']);
+            $psauths->setAuthType('userpass');
+            $psauths->setPassword($data['Contrasena']);
+            $psauths->setUsername($data['Usuario']);
+            $em->persist($psauths);
+
+            $psendpoints = new PsEndpoints();
+            $psendpoints->setId($data['Usuario']);
+            $psendpoints->setTransport('transport-udp');
+            $psendpoints->setAors($data['Usuario']);
+            $psendpoints->setAuth($data['Usuario']);
+            $psendpoints->setContext('reclutas-pbx');
+            $psendpoints->setDisallow('all');
+            $psendpoints->setAllow('ulaw');
+            $psendpoints->setDirectMedia('no');
+            $em->persist($psendpoints);
+
+            $em->flush();
+         
+            return new Response( "Extensión editada");
+        }
+        else{
+            return $this->render('extension/edit_extension.html.twig', 
+                ['form' => $form->createView(),]
+            );
         }
     }
 }
