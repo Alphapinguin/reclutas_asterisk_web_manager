@@ -1,20 +1,12 @@
-{% extends 'base.html.twig' %}
+<ul>
+    {% for item in libros %}
 
-{% block title %}Hello ExtensionController!{% endblock %}
+        <li>
+            {{item.id}} <a href="{{ path('deleteextension', {id: item.id}) }}">Eliminar</a> <a href="{{ path('editextension', {id: item.id}) }}">Editar</a>
+        </li>
 
-{% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    {% endfor %}
+    
+    <a href="{{ path('newextension') }}">Nueva extension</a>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code><a href="{{ '/home/juan-antonio/Develop/reclutas/src/Controller/ExtensionController.php'|file_link(0) }}">src/Controller/ExtensionController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/home/juan-antonio/Develop/reclutas/templates/extension/index.html.twig'|file_link(0) }}">templates/extension/index.html.twig</a></code></li>
-    </ul>
-</div>
-{% endblock %}
+</ul>
